@@ -589,6 +589,37 @@ dir C:\Windows\System32\*.exe
 
 # where opgaver 
 
+# 
+# Enabled er en bool
+Get-LocalUser | where enabled -eq $true
+
+Get-LocalUser | where enabled -eq $false
+# giver noget helt galt 
+Get-LocalUser | where enabled -eq false
+
+get-process | select -First 1 *
+# processer som har kørt i mere end 2 timer
+get-process | select name,starttime
+
+get-process | where { ((get-date) - $_.starttime) -gt (New-TimeSpan -Hours 24)}
+
+get-process | where {$_.Name -ne 'idle' 
+
+get-process | where {$_.Name -ne 'idle'} |
+where { ((get-date) - $_.starttime).totalhours -gt 2}
+
+
+get-process | where {$_.Name -ne 'idle'} |
+select name,@{name='tidsforskel';expression={(get-date) - $_.starttime}}
+
+get-process | where {$_.Name -ne 'idle'} |
+select name,@{name='tidsforskel';expression={(get-date) - $_.starttime}} |
+where {$_.tidsforskel -gt '05:00:00'}
+
+get-process | where {$_.Name -ne 'idle'} |
+where {((get-date) - $_.starttime) -gt '05:00:00' } |
+select name,starttime
+
 
 
 
