@@ -432,6 +432,165 @@ get-service | select name, S*
 # Opgaver til jer 
 # Module 3 Lab A Select-Object 
 
+$christmas=Get-Date -Month 12 -Day 24
+
+# tip her 
+# dir cmdlet forstår wildcard for path parameter
+# dvs
+dir C:\Windows\System32\*.dll
+
+# sortering i powershell
+# her de største værdier for ws først
+get-process w* | Sort-Object ws -Descending
+
+############################################
+cls
+############################################
+# Module 3 Where-Object  - filtrering af vores objekter i pipeline
+############################################
+
+# vi har brug for at kunne sammenligne i powershell
+
+$tal1=25
+$tal2=37
+# > send det ned i en fil (klassisk gammel syntaks også fra dos...)
+# ups vi fik en fil her med navnet 25 og indhold 37...
+$tal2 > $tal1
+
+n 25
+# giver true
+$tal2 -gt $tal1
+# $True og $False er indbygget i powershell 
+$True
+
+# dvs alle sammenligninger med operatorer i powershell
+# er via bindestreg dvs -gt, -lt, 
+
+$tal1 -eq $tal2
+
+$script='powershell'
+$scriptsprog='PowerShell'
+# -eq er IKKE case sensitiv
+$script -eq $scriptsprog
+
+$script -ceq $scriptsprog
+
+get-help about_com*
+
+# læs om alle comparison operators her:
+get-help about_Comparison_Operators
+
+# vi skal finde alle services med w som er kørende 
+
+
+get-service w* | 
+        Where-Object -Property status -eq -Value running
+
+get-service w* | 
+        Where-Object -Property status -eq -Value stopped
+
+
+# vi kan skrive det kortere sådan her:
+
+get-service w* | where status -eq running 
+
+get-help where -Parameter value
+get-help where -Parameter property
+
+# den simple where 
+# den kan kun håndtere et krav
+# dvs vi sammenligner med en specifik property
+get-process s* | where ws -gt 100000KB
+
+# list alle services med w som har et navn på 5 bogstaver
+
+Get-Service w* | where name.length -eq 5
+
+# vi skal have fat i den avancerede where - den kan ALT!
+
+# {} - så tuborg betyder vi laver en scriptblok
+# det er en stump powershell kode
+get-service w* | where -FilterScript {$_.Name.Length -eq 5}
+
+# den avancerede where er også den vi skal bruge
+# hvis vi har mere end et krav
+
+# list processer som har ws over en hvis værdi
+# og cputid også over en hvis værdi
+
+Get-Process | select -first 10
+
+Get-Process | where cpu -gt 40
+# vi må gerne udelade at skrive filterscript
+# for det tolkes som position 0
+# powershell opdager ud fra typen om position 0 er filterscript eller property
+Get-Process | where {$_.cpu -gt 40 -and $_.ws -gt 150000Kb}
+Get-Process | where cpu -gt 40
+
+get-service w* | where -FilterScript {$_.Name.Length -eq 5}
+
+get-help where -Parameter property
+get-help where -Parameter filterscript
+
+# pause til 14.31
+
+# vi kan stille betingelser
+# A -and  B er streng - det kræver at både A og B er opfyldt
+Get-Process | where {$_.cpu -gt 40 -and $_.ws -gt 150000Kb}
+
+
+# A -or  B er mere lempelig - det kræver bare at A ELLER B er opfyldt
+Get-Process | where {$_.cpu -gt 40 -or $_.ws -gt 150000Kb}
+
+# PowerShell er helt forfærdelig mht flere krav
+# fordi den bare evaluerer fra venstre mod højre
+# sæt gerne parenteser og test det af
+
+# # hyper-v rollen er installeret på vores maskine
+
+get-command -module hyper-v 
+
+get-command -noun vm
+
+get-vm
+
+Start-VM lon-dc1
+
+start-vm lon-cl1,lon-sql
+
+
+get-vm | gm
+# powershell kan godt forstå '00:00:30' som timespan på 30 sekunder
+get-vm | where uptime -gt '00:00:30'
+
+$timespan=New-TimeSpan -Seconds 30
+
+get-vm | where uptime -gt $timespan
+
+
+$timespan=New-TimeSpan -Minutes 3
+
+get-vm | where uptime -gt $timespan
+
+# uptime over 3 min og memory over 6000
+
+get-vm | where {$_.Uptime -gt (New-TimeSpan -Minutes 3) -and $_.MemoryAssigned -gt 6000MB}
+
+# liste exe filer
+dir C:\Windows\System32\*.exe
+
+# like bruger vi til tekstsammenligning med wildcard * 
+"ipconfig.exe" -like '*.exe'
+
+"ipconfig.exe" -like '*.dll'
+
+dir C:\Windows\System32 | where name -like '*.exe'
+dir C:\Windows\System32\*.exe
+
+# where opgaver 
+
+
+
 
 
 
