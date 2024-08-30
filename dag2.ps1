@@ -329,20 +329,150 @@ Get-Content .\processer.json | ConvertFrom-Json
 
 Get-Content .\processer.json | ConvertFrom-Json | gm
 
+###########################################################
+# 
+###########################################################
+
+Enter-PSSession -vmname lon-cl1 -Credential $credential
+
+$users=get-aduser -filter "surname -like 't*'"
+#"fornavn_efternavn"
+
+mkdir c:\userdata
+foreach ($user in $users)
+{
+    #mkdir "C:\userdata\$($user.givenname)_$($user.surname)" -WhatIf
+    # alternativt
+    mkdir ("C:\userdata\" + $user.givenname + "_" + $user.surname) -WhatIf
+
+}
+
+# I kan også sætte tekster sammen via +
+$fornavn='Donald'
+$efternavn='Trump'
+
+$fornavn + " " + $efternavn
+
+$landenavn='Danmark'
+"landet hedder $landenavn"
+
+"landet har antal bogstaver i sit navn: $($landenavn.length)"
 
 
+# execution policy - en beskyttelse imod os selv
+# 
+
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned
+
+# pause til 14.15
+
+# vi skal slette alle foldere under kursusfolderen
+
+dir C:\Powershellkursus -Directory
+dir C:\Powershellkursus -File
+
+dir C:\Powershellkursus -Directory | Remove-Item
+
+#try - catch eksempel
+
+# vi står på lon-cl1
+
+# fejlhåndtering i powershell 
+
+# den cmdlet I skal bruge i stedet for get-wmiobject
+Get-CimInstance win32_bios -ComputerName lon-sql,maskinefindesikke,lon-dc1
+
+# get-wmiobject win32_bios -ComputerName lon-sql,maskinefindesikke,lon-dc1
+
+# default så fortsætter powershell bare, selvom noget fejler
+
+$ErrorActionPreference
+
+#  vi kan håndtere fejl for de enkelte cmdlets og så sige den skal stoppe og skrive noget fornuftigt ud til brugeren
 
 
+Get-CimInstance win32_bios -ComputerName lon-sql,maskinefindesikke,lon-dc1
 
 
+$computerNames='lon-sql','maskinefindesikke','lon-dc1'
+
+foreach ($computer in $computerNames)
+{
+    # vi pakker det ind i en try-catch logik
+    try {
+        Get-CimInstance -ComputerName $computer -ClassName win32_bios -ErrorAction Stop
+    }
+    catch{
+        write-host "Tjek lige om servernavnet er korrekt for server $computer" -ForegroundColor Yellow
+    }
+}
 
 
+# vi står på lon-cl1
+
+# fejlhåndtering i powershell 
+
+# den cmdlet I skal bruge i stedet for get-wmiobject
+Get-CimInstance win32_bios -ComputerName lon-sql,maskinefindesikke,lon-dc1
+
+# get-wmiobject win32_bios -ComputerName lon-sql,maskinefindesikke,lon-dc1
+
+# default så fortsætter powershell bare, selvom noget fejler
+
+$ErrorActionPreference
+
+#  vi kan håndtere fejl for de enkelte cmdlets og så sige den skal stoppe og skrive noget fornuftigt ud til brugeren
 
 
+Get-CimInstance win32_bios -ComputerName lon-sql,maskinefindesikke,lon-dc1
 
 
+$computerNames='lon-sql','lon-dc1','findesikke'
 
+foreach ($computer in $computerNames)
+{
+    # vi pakker det ind i en try-catch logik
+    try {
+        Get-CimInstance -ComputerName $computer -ClassName win32_bios -ErrorAction Stop
+    }
+    catch{
+        write-host "Tjek lige om servernavnet er korrekt for server $computer" -ForegroundColor Yellow
+    }
+    finally{
+        write-host "Udføres altid   - både ved succes og fiasko" -ForegroundColor Cyan
+    }
+}
 
+##############################################
+# PowerShell moduler
+##############################################
+
+# viser det vi har loaded i den her session
+Get-module 
+
+# top tips til psreadline - i konsollen - findes til både 7 og 5
+# sæt jer ind i den, hvis I arbejder meget i konsollen
+# get-service - Ctrl-space så får I oversigt over variable og typer
+# ctrl-r viser historik
+
+# alt hvad der er installeret på maskinen
+Get-Module -ListAvailable
+
+$env:PSModulePath -split ';'
+
+# hvordan installerer jeg selv moduler?
+
+# dbatools - lækkert modul til at håndtere ms databaser og servere
+
+Find-Module dbatools 
+
+Get-PSRepository
+
+Set-PSRepository -Name psgallery -InstallationPolicy Trusted
+
+Install-Module dbatools
+# evaluering
+superusers.dk/mtm-eval
 
 
 
